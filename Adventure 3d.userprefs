@@ -1,0 +1,14 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/scripts/Dragon.cs">
+    <Files>
+      <File FileName="Assets/scripts/Dragon.cs" Line="58" Column="9" />
+      <File FileName="Assets/scripts/Adventurer.cs" Line="65" Column="38" />
+      <File FileName="../../../../../../Users/Shared/Unity/Space Shooter/Assets/Scripts/PlayerController.cs" Line="8" Column="2" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>
