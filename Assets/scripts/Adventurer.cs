@@ -8,8 +8,9 @@ using System.Collections;
 public class Adventurer : MonoBehaviour {
 
 	// Player control.
-	public float spin = 222f;					// Speed pref for rotation.
-	public float speed = 66f; // Pref.			// Speed pref for forward/backward movement.
+	public float spin;		// Speed pref for rotation.
+	public float speed;		// Speed pref for forward/backward movement.
+	public bool defeat;		// Prevents player from moving if eaten.
 	
 	public AudioClip pickup, drop;
 
@@ -23,16 +24,19 @@ public class Adventurer : MonoBehaviour {
 		adventurer = gameObject.transform;
 	}
 
-	void FixedUpdate () {		
+	void FixedUpdate () {	
 		// Player rotation.
 		float rotation = Input.GetAxis("Horizontal");
 		adventurer.Rotate(0, rotation * spin * Time.deltaTime, 0);
 	
-		// Player forward movement.
+		// Player forward/backward movement.
 		CharacterController controller = GetComponent<CharacterController>();
 		direction = new Vector3(0, 0, Input.GetAxis("Vertical") * speed);
 		direction = adventurer.TransformDirection(direction);
 		controller.Move(direction * Time.deltaTime);
+
+		// If in a dragon's belly, cancel movemement.
+		if (defeat) { controller.Move(-direction * Time.deltaTime); }
 	}
 
 	void Update () {

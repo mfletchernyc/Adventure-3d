@@ -2,7 +2,10 @@ fileFormatVersion: 2
 guid: 81b92d5e26c444157a70ec9f565dd15e
 MonoImporter:
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - slay: {fileID: 8300000, guid: ca1fee044e23148f491ca11182e1b6bd, type: 3}
+  - chomp: {fileID: 8300000, guid: 970e1b87d50b846798fb64776e7dd9a8, type: 3}
+  - death: {fileID: 8300000, guid: 5d5793af7d833449b8c7073036405256, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

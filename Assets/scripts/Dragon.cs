@@ -8,37 +8,45 @@ using System.Collections.Generic;
 
 public class Dragon : MonoBehaviour {
 	
-	public float interestRange = 80f;	// Distance at which dragon notices items or the adventurer.
+	public float interestRange;		// Distance at which dragon notices items or the adventurer.
+	public float biteRange;			// Distance at which dragon can eat the adventurer.
+
+	public float speed;
 
 	public AudioClip slay, chomp, death;
 
 	private Transform dragon;
 	private GameObject adventurer;
+	private Vector3 dragonPosition;
+	private Vector3 adventurerPosition;
 
-	private Transform alive;		// Default dragon appearance.
-	private Transform dead;			// Dead dragon appearance.
-	private Transform chomping;		// Attacking dragon appearance.
+	private Transform alive;			// Default dragon appearance.
+	private Transform dead;				// Dead dragon appearance.
+	private Transform chomping;			// Attacking dragon appearance.
 
-	private Collider[] entities;	// Container for anything in the sphere of interest.
-	private GameObject target;		// Object for chasing and attacking.
-	private Vector3 view;			// Direction to look chasing and attacking.	
-	
-	private Dictionary<string, float> chompDuration = new Dictionary<string, float>() { { "Yorgle", 1.5f}, { "Grundle", 2.5f} };
+	private Collider[] entities;		// Container for anything in the sphere of interest.
+	private GameObject target;			// Object for chasing and attacking.
+	private Vector3 targetPosition;		// Direction to look chasing and attacking.
+
+	private Adventurer Adventurer;		// Adventurer script ref for setting player death.
+
+	// Duration between chomping and eating (plus timers).
+	private Dictionary<string, float> chompDuration = new Dictionary<string, float>() { { "Yorgle", 1.0f}, { "Grundle", 1.5f} };
 	private Dictionary<string, float> chompTimer = new Dictionary<string, float>() { { "Yorgle", 0f}, { "Grundle", 0f} };
 
 
 	void Awake () {
 		dragon = gameObject.transform;
+
+		// Dragon object contains the three poses.
 		alive = dragon.FindChild("dragon");
 		dead = dragon.FindChild("dragon_dead");
 		chomping = dragon.FindChild("dragon_chomp");
-
-		// transform.parent.gameObject
-		// gameObject.name
 	}
 	
 	void Start () {
 		adventurer = GameObject.Find("adventurer");
+		Adventurer = adventurer.GetComponent<Adventurer>();
 	}
 
 	void Update () {
@@ -58,39 +66,48 @@ public class Dragon : MonoBehaviour {
 					// Debug.Log(dragon.name + " detects " + entities[count].name);
 				}
 				
-				if (entities[count].tag == "Player") {
+				if (entities[count].tag == "Player" && !Adventurer.defeat) {
 					Chase(adventurer);
 				}
 			}
 		}
 
+		// Dragon is attacking...
 		if (chomping.gameObject.activeSelf) {
 			if (Time.time > chompTimer[dragon.name] + chompDuration[dragon.name]) {
+				// The time for chomping is over.
 				Pose(true, false, false);
+
+				// If player is close enough, get in my belly!
+				if (Vector3.Distance(adventurer.transform.position, dragon.position) < biteRange) {
+					audio.PlayOneShot(death);
+
+					adventurer.transform.parent = dragon;
+					adventurer.transform.localPosition = new Vector3(0f, 8f, 0f);
+
+					Adventurer.defeat = true;
+				}
 			}
 		}
 	}
 	
 	void OnTriggerEnter (Collider other) {
-		if (other.name == "sword") { 
-			Die(); 
-		} else {
-			Debug.Log(dragon.name + " collides with " + other.name);
-		}
+		if (other.name == "sword") { Die(); }
 	}
 	
 	void Chase (GameObject target) {
-		view = new Vector3(target.transform.position.x, dragon.position.y, target.transform.position.z);
-		dragon.LookAt(view);
+		targetPosition = new Vector3(target.transform.position.x, dragon.position.y, target.transform.position.z);
+		dragon.LookAt(targetPosition);
 
 		// if scary object: flee
-		// if touching the player, attack
-		// else move toward player
+
+		// dragon.position += Vector3.forward * speed * Time.deltaTime;
+		dragon.position = Vector3.MoveTowards(dragon.position, targetPosition, speed * Time.deltaTime);
 	}
 	
 	void Chomp () {
-		// Only one attack at a time...
-		if (alive.gameObject.activeSelf) {
+		// Called from the adventurer script.
+		if (alive.gameObject.activeSelf) { // Don't chomp if already chomping.
 			audio.PlayOneShot(chomp);
 			Pose(false, false, true);
 
