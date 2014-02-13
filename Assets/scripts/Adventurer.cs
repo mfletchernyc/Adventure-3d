@@ -14,7 +14,7 @@ public class Adventurer : MonoBehaviour {
 	
 	public AudioClip pickup, drop;
 
-	public Material Black, Blue, Green, Lime, Olive, Purple, Red, Yellow;
+	public Material blue, green, lime, olive, purple, red, yellow;
 
 	private Transform adventurer;
 	private Vector3 direction = Vector3.zero;	// Container for reading input for forward/backward movement.
@@ -27,18 +27,18 @@ public class Adventurer : MonoBehaviour {
 	void FixedUpdate () {	
 		// Player rotation.
 		float rotation = Input.GetAxis("Horizontal");
-		adventurer.Rotate(0, rotation * spin * Time.deltaTime, 0);
+		adventurer.Rotate(0f, rotation * spin * Time.deltaTime, 0f);
 	
 		// Player forward/backward movement.
 		CharacterController controller = GetComponent<CharacterController>();
-		direction = new Vector3(0, 0, Input.GetAxis("Vertical") * speed);
+		direction = new Vector3(0f, 0f, Input.GetAxis("Vertical") * speed);
 		direction = adventurer.TransformDirection(direction);
 		controller.Move(direction * Time.deltaTime);
 
 		// If in a dragon's belly, cancel movemement.
 		if (defeat) { controller.Move(-direction * Time.deltaTime); }
 	}
-
+	
 	void Update () {
 		// Drop an object if possible.
 		if (Input.GetButton("Jump")) { DropObject(); }
@@ -54,7 +54,7 @@ public class Adventurer : MonoBehaviour {
 
 			// Pick up and position object.
 			other.transform.parent = adventurer;
-			other.transform.localPosition = new Vector3(0, 0, 2.5f);
+			other.transform.localPosition = new Vector3(0f, 0f, 2.5f);
 		}
 		
 		// Set player color to match dominant local color.
@@ -63,12 +63,12 @@ public class Adventurer : MonoBehaviour {
 		}
 	}
 
-	void OnControllerColliderHit (ControllerColliderHit other) {
-		// Here there be dragons...
-		if (other.transform.tag == "Dragon") {
-			other.transform.SendMessage("Chomp");
-		}
-	}
+//	void OnControllerColliderHit (ControllerColliderHit other) {
+//		// Here there be dragons...
+//		if (other.transform.tag == "Dragon") {
+//			other.transform.SendMessage("Chomp");
+//		}
+//	}
 
 	void DropObject () {
 		foreach (Transform child in adventurer) {

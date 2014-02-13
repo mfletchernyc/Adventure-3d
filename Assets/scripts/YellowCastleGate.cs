@@ -9,8 +9,7 @@ public class YellowCastleGate : MonoBehaviour {
 
 	void OnTriggerEnter (Collider other) {
 		if (other.name == "yellow key") {
-			// Opens the gate, but much too quickly.
-			transform.Translate(Vector3.up * 602f * Time.deltaTime);
+			iTween.MoveBy(gameObject, iTween.Hash("y", 12));
 		}
 	}
 }

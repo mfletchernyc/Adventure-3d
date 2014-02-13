@@ -67,7 +67,9 @@ public class Dragon : MonoBehaviour {
 				}
 				
 				if (entities[count].tag == "Player" && !Adventurer.defeat) {
-					Chase(adventurer);
+					if (Vector3.Distance(adventurer.transform.position, dragon.position) < biteRange) {
+						Chomp();
+					} else { Chase(adventurer); }
 				}
 			}
 		}
