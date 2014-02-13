@@ -47,8 +47,8 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\scripts\Adventurer.cs" />
+     <Compile Include="Assets\scripts\CastleGate.cs" />
      <Compile Include="Assets\scripts\Dragon.cs" />
-     <Compile Include="Assets\scripts\YellowCastleGate.cs" />
      <Compile Include="Assets\scripts\iTween.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

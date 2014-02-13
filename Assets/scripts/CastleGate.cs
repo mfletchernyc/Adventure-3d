@@ -5,11 +5,11 @@ using System.Collections;
 // M. Fletcher 2014
 // http://en.wikipedia.org/wiki/Adventure_(1979_video_game)
 
-public class YellowCastleGate : MonoBehaviour {
+public class CastleGate : MonoBehaviour {
 
 	void OnTriggerEnter (Collider other) {
-		if (other.name == "yellow key") {
-			iTween.MoveBy(gameObject, iTween.Hash("y", 12));
+		if (this.name.Replace("castle gate","") == other.renderer.material.name.Replace("(Instance)","")) {
+			iTween.MoveBy(gameObject, iTween.Hash("y", 12, "time", 4));
 		}
 	}
 }

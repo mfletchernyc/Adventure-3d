@@ -1,8 +1,8 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/scripts/YellowCastleGate.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/scripts/Adventurer.cs">
     <Files>
-      <File FileName="Assets/scripts/Adventurer.cs" Line="66" Column="5" />
+      <File FileName="Assets/scripts/Adventurer.cs" Line="17" Column="18" />
       <File FileName="Assets/scripts/Dragon.cs" Line="72" Column="35" />
       <File FileName="Assets/scripts/YellowCastleGate.cs" Line="12" Column="1" />
     </Files>
