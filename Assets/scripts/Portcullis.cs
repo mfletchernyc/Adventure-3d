@@ -5,11 +5,11 @@ using System.Collections;
 // M. Fletcher 2014
 // http://en.wikipedia.org/wiki/Adventure_(1979_video_game)
 
-public class CastleGate : MonoBehaviour {
+public class Portcullis : MonoBehaviour {
 
 	void OnTriggerEnter (Collider other) {
-		if (this.name.Replace("castle gate","") == other.renderer.material.name.Replace("(Instance)","")) {
-			iTween.MoveBy(gameObject, iTween.Hash("y", 12, "time", 4));
+		if (this.name.Replace("portcullis", "") == other.renderer.material.name.Replace("(Instance)", "")) {
+			iTween.MoveBy(gameObject, iTween.Hash("y", 12f, "time", 3f));
 		}
 	}
 }
