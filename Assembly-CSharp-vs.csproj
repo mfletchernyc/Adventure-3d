@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\scripts\Adventurer.cs" />
+     <Compile Include="Assets\scripts\Cam.cs" />
      <Compile Include="Assets\scripts\Dragon.cs" />
      <Compile Include="Assets\scripts\Portcullis.cs" />
      <Compile Include="Assets\scripts\iTween.cs" />
