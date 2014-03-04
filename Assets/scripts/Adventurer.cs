@@ -11,7 +11,7 @@ public class Adventurer : MonoBehaviour {
 	public float spin;		// Speed pref for rotation.
 	public float speed;		// Speed pref for forward/backward movement.
 	public bool defeat;		// Prevents player from moving if eaten.
-	public bool barbican;	// Camera and movement options change in the barbican.
+	public bool barbican;	// Camera and movement options change when going through the castle.
 	
 	public AudioClip pickup, drop;
 	public Material black, blue, green, lime, olive, purple, red, yellow;
@@ -20,7 +20,7 @@ public class Adventurer : MonoBehaviour {
 	private GameObject cam;
 	private int defaultInventory;	// Children of the player object. Default is the camera.
 
-	private GameObject dragon;		// Dragon ref for getting Dragon script.
+	private GameObject dragon;		// Dragon ref for getting Dragon script on the next line...
 	private Dragon Dragon;			// Dragon script ref for checking dragon position during teleportation.
 	
 	void Awake () {
@@ -31,7 +31,7 @@ public class Adventurer : MonoBehaviour {
 	}
 
 	void Start () {
-		dragon = GameObject.Find("Yorgle");
+		dragon = GameObject.Find("Yorgle"); // All dragons use the same script.
 		Dragon = dragon.GetComponent<Dragon>();
 	}
 
@@ -73,9 +73,9 @@ public class Adventurer : MonoBehaviour {
 			adventurer.renderer.material = (Material)this.GetType().GetField(other.renderer.name.ToString()).GetValue(this);
 		}
 
-		// Lower the camera when entering a castle.
+		// Lower the camera when entering the barbican.
 		if (other.name == "barbican") {
-			MoveCamera(new Vector3 (0f, -15f, 0f));
+			iTween.MoveBy(cam, new Vector3 (0f, -15f, 0f), 0.5f);
 			barbican = true;
 		}
 
@@ -108,15 +108,18 @@ public class Adventurer : MonoBehaviour {
 	}
 	
 	void OnTriggerExit (Collider other) {
-		// Raise the camera when entering a castle.
+		// Raise the camera when exiting the barbican.
 		if (other.name == "barbican") {
-			MoveCamera(new Vector3 (0f, 15f, 0f));
-			barbican = false;
+			iTween.MoveBy(cam, iTween.Hash(
+				"amount", new Vector3 (0f, 15f, 0f), "time", 0.5f, 
+				"onComplete", "ExitedBarbican", "onCompleteTarget", gameObject
+			));
 		}
 	}
 	
-	void MoveCamera(Vector3 position) {
-		iTween.MoveBy(cam, position, 0.5f);
+	void ExitedBarbican() {
+		// Called after iTweening camera to prevent cam script from taking over.
+		barbican = false;
 	}
 
 	void DropObject () {

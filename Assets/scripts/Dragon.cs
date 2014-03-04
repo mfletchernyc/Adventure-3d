@@ -17,6 +17,7 @@ public class Dragon : MonoBehaviour {
 
 	private Transform dragon;
 	private GameObject adventurer;
+	private Adventurer Adventurer;
 
 	private Transform alive;			// Default dragon appearance.
 	private Transform dead;				// Dead dragon appearance.
@@ -25,8 +26,6 @@ public class Dragon : MonoBehaviour {
 	
 	private GameObject target;			// Object for chasing, attacking and guarding.
 	private Vector3 targetPosition;		// Direction to look chasing and attacking.
-
-	private Adventurer Adventurer;		// Adventurer script ref for setting player death.
 
 	// Need items that frighten each dragon.
 	// Need items that each dragon guards.
