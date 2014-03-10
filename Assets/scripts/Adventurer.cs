@@ -8,6 +8,7 @@ using System.Collections;
 public class Adventurer : MonoBehaviour {
 
 	// Player control.
+	// TO DO: float and speed don't neede to be public.
 	public float spin;		// Speed pref for rotation.
 	public float speed;		// Speed pref for forward/backward movement.
 	public bool defeat;		// Prevents player from moving if eaten.
@@ -41,6 +42,7 @@ public class Adventurer : MonoBehaviour {
 		adventurer.Rotate(0f, rotation * spin * Time.deltaTime, 0f);
 
 		// Player forward/backward movement.
+		// TO DO: set these up on start() to avoid contantly recreating objects.
 		CharacterController controller = GetComponent<CharacterController>();
 		Vector3 direction = new Vector3(0f, 0f, Input.GetAxis("Vertical") * speed);
 		direction = adventurer.TransformDirection(direction);
@@ -73,7 +75,8 @@ public class Adventurer : MonoBehaviour {
 			adventurer.renderer.material = (Material)this.GetType().GetField(other.renderer.name.ToString()).GetValue(this);
 		}
 
-		// Lower the camera when entering the barbican.
+		// Lower the camera when entering a barbican.
+		// TO DO: convert this to tag instead of name, then make this whole function a switch.
 		if (other.name == "barbican") {
 			iTween.MoveBy(cam, new Vector3 (0f, -15f, 0f), 0.5f);
 			barbican = true;
@@ -108,7 +111,7 @@ public class Adventurer : MonoBehaviour {
 	}
 	
 	void OnTriggerExit (Collider other) {
-		// Raise the camera when exiting the barbican.
+		// Raise the camera when exiting a barbican.
 		if (other.name == "barbican") {
 			iTween.MoveBy(cam, iTween.Hash(
 				"amount", new Vector3 (0f, 15f, 0f), "time", 0.5f, 
