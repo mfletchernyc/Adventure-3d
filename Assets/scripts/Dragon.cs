@@ -56,7 +56,7 @@ public class Dragon : MonoBehaviour {
 			// - If the adventurer is in range of a preferred object, attack.
 			
 			for (int count = 0; count < entities.Length; count++) {
-				if (entities[count].name == "adventurer" && !Adventurer.defeat) {
+				if (entities[count].name == "adventurer" && !Adventurer.gameOver) {
 					if (Vector3.Distance(dragon.position, adventurer.transform.position) < biteRange) {
 						Chomp();
 					} else { 
@@ -125,7 +125,7 @@ public class Dragon : MonoBehaviour {
 		audio.PlayOneShot(death);
 		adventurer.transform.parent = dragon;
 		adventurer.transform.localPosition = new Vector3(0f, 8f, 0f);
-		Adventurer.defeat = true;
+		Adventurer.gameOver = true;
 	}
 
 	void Die () {

@@ -8,10 +8,9 @@ using System.Collections;
 public class Adventurer : MonoBehaviour {
 
 	// Player control.
-	// TO DO: float and speed don't neede to be public.
 	public float spin;		// Speed pref for rotation.
 	public float speed;		// Speed pref for forward/backward movement.
-	public bool defeat;		// Prevents player from moving if eaten.
+	public bool gameOver;	// Prevents player from moving if game over.
 	public bool barbican;	// Camera and movement options change when going through the castle.
 	
 	public AudioClip pickup, drop;
@@ -19,6 +18,8 @@ public class Adventurer : MonoBehaviour {
 
 	private Transform adventurer;
 	private GameObject cam;
+	private CharacterController controller;
+	
 	private int defaultInventory;	// Children of the player object. Default is the camera.
 
 	private GameObject dragon;		// Dragon ref for getting Dragon script on the next line...
@@ -37,19 +38,13 @@ public class Adventurer : MonoBehaviour {
 	}
 
 	void FixedUpdate () {	
-		// Player rotation.
-		float rotation = Input.GetAxis("Horizontal");
-		adventurer.Rotate(0f, rotation * spin * Time.deltaTime, 0f);
+		// Player rotation and movement.
+		adventurer.Rotate(0f, Input.GetAxis("Horizontal") * spin * Time.deltaTime, 0f);
 
-		// Player forward/backward movement.
-		// TO DO: set these up on start() to avoid contantly recreating objects.
-		CharacterController controller = GetComponent<CharacterController>();
-		Vector3 direction = new Vector3(0f, 0f, Input.GetAxis("Vertical") * speed);
-		direction = adventurer.TransformDirection(direction);
-		controller.Move(direction * Time.deltaTime);
-
-		// If player is in a dragon's belly, cancel movemement.
-		if (defeat) { controller.Move(-direction * Time.deltaTime); }
+		controller = GetComponent<CharacterController>();
+		if (!gameOver) {
+			controller.Move(adventurer.TransformDirection(new Vector3(0f, 0f, Input.GetAxis("Vertical") * speed)) * Time.deltaTime);
+		}
 	}
 	
 	void Update () {
@@ -58,61 +53,62 @@ public class Adventurer : MonoBehaviour {
 	}
 
 	void OnTriggerEnter (Collider other) {
-		// Pick up items when running into them.
-		if (other.gameObject.tag == "Item") {
-			audio.PlayOneShot(pickup);
-
-			// If player is already holding something, drop it.
-			if (adventurer.childCount > defaultInventory) { DropObject(); }
-
-			// Pick up and position object.
-			other.transform.parent = adventurer;
-			other.transform.localPosition = new Vector3(0f, 0f, 2.5f);
-		}
-		
-		// Set player color to match dominant local color.
-		if (other.gameObject.tag == "Threshold") {
-			adventurer.renderer.material = (Material)this.GetType().GetField(other.renderer.name.ToString()).GetValue(this);
-		}
-
-		// Lower the camera when entering a barbican.
-		// TO DO: convert this to tag instead of name, then make this whole function a switch.
-		if (other.name == "barbican") {
-			iTween.MoveBy(cam, new Vector3 (0f, -15f, 0f), 0.5f);
-			barbican = true;
-		}
-
-		// Maze teleporters.
-		if (other.gameObject.tag == "Jump") {
-			// Save the current player position.
-			float advX = adventurer.position.x;
-			float advZ = adventurer.position.z;
-
-			// Teleporter name is "jump " + delta X + "x" + delta Z.
-			string[] jumpDeltas = other.name.Replace("jump ", "").Split('x');
-			float deltaX, deltaZ;
-			if (float.TryParse(jumpDeltas[0], out deltaX)) { advX += deltaX; }
-			if (float.TryParse(jumpDeltas[1], out deltaZ)) { advZ += deltaZ; }
-
-			// Find everything in the player's sphere, and teleport any dragons along, too.
-			Collider[] entities = Physics.OverlapSphere(adventurer.position, Dragon.interestRange);
-
-			for (int count = 0; count < entities.Length; count++) {
-				if (entities[count].tag == "Dragon") {
-					float dragonX = entities[count].transform.position.x + deltaX;
-					float dragonZ = entities[count].transform.position.z + deltaZ;
-					entities[count].transform.position = new Vector3(dragonX, 0f, dragonZ);
-				}
-			}
+		switch (other.gameObject.tag) {
+			// Pick up items when running into them.
+			case "Item":
+				audio.PlayOneShot(pickup);
+				
+				// If player is already holding something, drop it.
+				if (adventurer.childCount > defaultInventory) { DropObject(); }
+				
+				// Pick up and position object.
+				other.transform.parent = adventurer;
+				other.transform.localPosition = new Vector3(0f, 0f, 2.5f);
+				break;
 			
-			// Teleport the player.
-			adventurer.position = new Vector3(advX, 8f, advZ);
+			// Set player color to match dominant local color.
+			case "Threshold":
+				adventurer.renderer.material = (Material)this.GetType().GetField(other.renderer.name.ToString()).GetValue(this);
+				break;
+			
+			// Lower the camera when entering a barbican.
+			case "Barbican":
+				iTween.MoveBy(cam, new Vector3 (0f, -15f, 0f), 0.5f);
+				barbican = true;
+				break;
+
+			// Maze teleporters.
+			case "Jump":
+				// Save the current player position.
+				float advX = adventurer.position.x;
+				float advZ = adventurer.position.z;
+				
+				// Teleporter name is "jump " + delta X + "x" + delta Z.
+				string[] jumpDeltas = other.name.Replace("jump ", "").Split('x');
+				float deltaX, deltaZ;
+				if (float.TryParse(jumpDeltas[0], out deltaX)) { advX += deltaX; }
+				if (float.TryParse(jumpDeltas[1], out deltaZ)) { advZ += deltaZ; }
+				
+				// Find everything in the player's sphere, and teleport any dragons along, too.
+				Collider[] entities = Physics.OverlapSphere(adventurer.position, Dragon.interestRange);
+				
+				for (int count = 0; count < entities.Length; count++) {
+					if (entities[count].tag == "Dragon") {
+						float dragonX = entities[count].transform.position.x + deltaX;
+						float dragonZ = entities[count].transform.position.z + deltaZ;
+						entities[count].transform.position = new Vector3(dragonX, 0f, dragonZ);
+					}
+				}
+				
+				// Teleport the player.
+				adventurer.position = new Vector3(advX, 8f, advZ);
+				break;
 		}
 	}
 	
 	void OnTriggerExit (Collider other) {
 		// Raise the camera when exiting a barbican.
-		if (other.name == "barbican") {
+		if (other.gameObject.tag == "Barbican") {
 			iTween.MoveBy(cam, iTween.Hash(
 				"amount", new Vector3 (0f, 15f, 0f), "time", 0.5f, 
 				"onComplete", "ExitedBarbican", "onCompleteTarget", gameObject
