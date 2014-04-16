@@ -11,16 +11,16 @@ public class Adventurer : MonoBehaviour {
 	public float spin;		// Speed pref for rotation.
 	public float speed;		// Speed pref for forward/backward movement.
 	public bool gameOver;	// Prevents player from moving if game over.
-//	public bool barbican;	// Camera and movement options change when going through the castle.
 	
 	public AudioClip pickup, drop;
 	public Material black, blue, green, lime, olive, purple, red, yellow;
 
 	private Transform adventurer;
-//	private GameObject cam;
 	private CharacterController controller;
 	
 	private int defaultInventory;	// Children of the player object. Default is the camera.
+	
+	private Cam Cam;				// Cam script ref for telling cam about entering a new area.
 
 	private GameObject dragon;		// Dragon ref for getting Dragon script on the next line...
 	private Dragon Dragon;			// Dragon script ref for checking dragon position during teleportation.
@@ -28,13 +28,13 @@ public class Adventurer : MonoBehaviour {
 	void Awake () {
 		adventurer = gameObject.transform;
 		defaultInventory = adventurer.childCount;
-//		cam = GameObject.Find("camera");
-//		barbican = false;
 	}
 
 	void Start () {
 		dragon = GameObject.Find("Yorgle"); // All dragons use the same script.
 		Dragon = dragon.GetComponent<Dragon>();
+
+		Cam = GameObject.Find("camera").GetComponent<Cam>();
 	}
 
 	void FixedUpdate () {	
@@ -70,12 +70,11 @@ public class Adventurer : MonoBehaviour {
 			case "Threshold":
 				adventurer.renderer.material = (Material)this.GetType().GetField(other.renderer.name.ToString()).GetValue(this);
 				break;
-			
-//			// Lower the camera when entering a barbican.
-//			case "Barbican":
-//				iTween.MoveBy(cam, new Vector3 (0f, -15f, 0f), 0.5f);
-//				barbican = true;
-//				break;
+				
+			// Tell camera script to move the camera. Player is a more stable place to test for this.
+			case "Cam":
+			Cam.MoveCamera(other.name);
+				break;
 
 			// Maze teleporters.
 			case "Jump":
@@ -83,7 +82,7 @@ public class Adventurer : MonoBehaviour {
 				float advX = adventurer.position.x;
 				float advZ = adventurer.position.z;
 				
-				// Teleporter name is "jump " + delta X + "x" + delta Z.
+				// Teleporter name is "jump " + deltaX + "x" + deltaZ.
 				string[] jumpDeltas = other.name.Replace("jump ", "").Split('x');
 				float deltaX, deltaZ;
 				if (float.TryParse(jumpDeltas[0], out deltaX)) { advX += deltaX; }
@@ -105,21 +104,12 @@ public class Adventurer : MonoBehaviour {
 				break;
 		}
 	}
-	
-//	void OnTriggerExit (Collider other) {
-//		// Raise the camera when exiting a barbican.
-//		if (other.gameObject.tag == "Barbican") {
-//			iTween.MoveBy(cam, iTween.Hash(
-//				"amount", new Vector3 (0f, 15f, 0f), "time", 0.5f, 
-//				"onComplete", "ExitedBarbican", "onCompleteTarget", gameObject
-//			));
-//		}
-//	}
-//	
-//	void ExitedBarbican() {
-//		// Called after iTweening camera to prevent cam script from taking over.
-//		barbican = false;
-//	}
+
+	void OnTriggerExit (Collider other) {
+		if (other.gameObject.tag == "Cam") {
+			Cam.MoveCamera("exit");
+		}
+	}
 
 	void DropObject () {
 		foreach (Transform child in adventurer) {

@@ -1,40 +1,43 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+// Adventure reinterpretation for Unity
+// M. Fletcher 2014
+// http://en.wikipedia.org/wiki/Adventure_(1979_video_game)
+
 public class Cam : MonoBehaviour {
 
 	// Check for objects between the camera and player. Move the camera if necessary.
 
-	// Every map area has default and alt camera positions. Default looks best for the
-	// area. Alt prevents any collisions with area-specific objects. (X is always 0.)
+	// The map area has default camera positions. 'Hero' looks best cinematically.
+	// 'Safe' prevents any collisions with area-specific objects. When the camera's
+	// view of the player becomes obstructed, it will move towards the safe position
+	// (and vice versa). Special areas (like barbicans) change these positions.
 
+	public float defaultHeroY, defaultHeroZ;
+	public float defaultSafeY, defaultSafeZ;
+	
 	private Transform cam;
 	private GameObject adventurer;
-	private Adventurer Adventurer;
 	
 	private Transform target;			// The camera actually looks at a point above the player.
-	private GameObject sensor;			// Raycasts to check new camera position for obstruction.
+	private GameObject sensor;			// Raycasts to check camera position for obstruction.
 	private float distance;				// Distance from adventurer to sensor for raycasting.
 	private Vector3 direction;			// Direction from adventurer to sensor for raycasting.
 	private bool obstruction;			// Flag for camera obstruction.
-	private Vector3 previousPosition;	// Fallback position if moving the camera causes an obstruction.
+	private bool transition;			// Flag for camera switching position between areas.
 	
-	private float defaultY;		
-	private float defaultZ;
-	private float altY;
-	private float altZ;
-	private float deltaY;
-	private float deltaZ;
-	private float previousY;
-	private float previousZ;
+	private float heroY, heroZ;
+	private float safeY, safeZ;
+	private float deltaY, deltaZ;
 	
 	void Awake () {
 		cam = gameObject.transform;
-
-		defaultY = 4f;
-		defaultZ = -5f;
-		altY = 6f;
-		altZ = -.75;
+		
+		heroY = defaultHeroY;
+		heroZ = defaultHeroZ;
+		safeY = defaultSafeY;
+		safeZ = defaultSafeZ;
 
 		FindCamDeltas();
 	}
@@ -43,7 +46,6 @@ public class Cam : MonoBehaviour {
 		sensor = GameObject.Find("sensor");						// Maintains current default camera position.
 		target = GameObject.Find("camera target").transform;	// Looking at a point above and in front of the player looks better.
 		adventurer = GameObject.Find("adventurer");
-//		Adventurer = adventurer.GetComponent<Adventurer>();
 	}
 	
 	void Update () {
@@ -51,50 +53,95 @@ public class Cam : MonoBehaviour {
 		// by casting a ray from the player position to a sensor in the camera's position.
 		// This avoids camera bounce and accounts for the camera target not being the player.
 
-		// Reset the sensor to current camera position
-		sensor.transform.localPosition = cam.localPosition;
-		sensor.transform.LookAt(adventurer.transform);
+		if (!transition) {
+			float updatedY, updatedZ;
+			Vector3 previousPosition;
 
-		if (ObstructedSensor()) { 
-			// Move the sensor to alt position to clear the obstruction.
-			previousY = sensor.transform.localPosition.y + deltaY;
-			previousZ = sensor.transform.localPosition.z + deltaZ;
+			// Reset the sensor to current camera position
+			sensor.transform.localPosition = cam.localPosition;
+			sensor.transform.LookAt(adventurer.transform);
 
-			if (previousY < altY || previousZ + deltaZ < altZ) {
-				sensor.transform.localPosition = new Vector3(0f, previousY, previousZ);
-			} else {
-				sensor.transform.localPosition = new Vector3(0f, altY, altZ);
+			if (ObstructedSensor()) { 
+				// Move the sensor to alt position to clear the obstruction.
+				updatedY = sensor.transform.localPosition.y + deltaY;
+				updatedZ = sensor.transform.localPosition.z + deltaZ;
+
+				// Move the sensor toward (or into) alternate position.
+				if (updatedY < safeY || updatedZ + deltaZ < safeZ) {
+					sensor.transform.localPosition = new Vector3(0f, updatedY, updatedZ);
+				} else { sensor.transform.localPosition = new Vector3(0f, safeY, safeZ); }
 			}
+
+			else {
+				// Move the camera toward the default position (if necessary and possible).
+				previousPosition = sensor.transform.localPosition;
+
+				updatedY = sensor.transform.localPosition.y - deltaY;
+				updatedZ = sensor.transform.localPosition.z - deltaZ;
+
+				// Move the sensor toward (or into) default position.
+				if (updatedY > heroY || updatedZ + deltaZ > heroZ) {
+					sensor.transform.localPosition = new Vector3(0f, updatedY, updatedZ);
+				} else { sensor.transform.localPosition = new Vector3(0f, heroY, heroZ); }
+
+				// Restore sensor position if new position will cause bouncing.
+				sensor.transform.LookAt(adventurer.transform);
+				if (ObstructedSensor()) {
+					sensor.transform.localPosition = previousPosition;
+				}
+			}
+		}
+
+			// Put the camera in position.
+			cam.localPosition = sensor.transform.localPosition;
+			cam.LookAt(target);
+	}
+
+	public void MoveCamera (string message) {
+		transition = true;
+
+		if (message == "exit") {
+			heroY = defaultHeroY;
+			heroZ = defaultHeroZ;
+			safeY = defaultSafeY;
+			safeZ = defaultSafeZ;
 		}
 
 		else {
-			// Move the camera toward the default position (if necessary and possible).
-			previousPosition = sensor.transform.localPosition;
+			// Special area name is "cam " + heroY + "x" + heroY + "x" + safeY + "x" + safeZ.
+			string[] camPositions = message.Replace("cam ", "").Split('x');
+			float newHeroY, newHeroZ, newSafeY, newSafeZ;
 
-			previousY = sensor.transform.localPosition.y - deltaY;
-			previousZ = sensor.transform.localPosition.z - deltaZ;
-
-			if (previousY > defaultY || previousZ + deltaZ > defaultZ) {
-				sensor.transform.localPosition = new Vector3(0f, previousY, previousZ);
-			} else {
-				sensor.transform.localPosition = new Vector3(0f, defaultY, defaultZ);
-			}
-
-			// Restore sensor position if new position will cause bouncing.
-			sensor.transform.LookAt(adventurer.transform);
-			if (ObstructedSensor()) {
-				sensor.transform.localPosition = previousPosition;
-			}
+			if (float.TryParse(camPositions[0], out newHeroY)) { heroY = newHeroY; }
+			if (float.TryParse(camPositions[1], out newHeroZ)) { heroZ = newHeroZ; }
+			if (float.TryParse(camPositions[2], out newSafeY)) { safeY = newSafeY; }
+			if (float.TryParse(camPositions[3], out newSafeZ)) { safeZ = newSafeZ; }
 		}
 
-		// Put the camera in position.
-		cam.localPosition = sensor.transform.localPosition;
+		// Without iTween: cam.localPosition = new Vector3(0f, heroY, heroZ);
+		iTween.MoveTo(sensor, iTween.Hash(
+			"position", new Vector3(0f, heroY, heroZ), "time", 0.5f, "islocal", true,
+			"onComplete", "CameraIsMoved", "onCompleteTarget", gameObject
+
+		));
 		cam.LookAt(target);
+		
+		sensor.transform.localPosition = cam.localPosition;
+		sensor.transform.LookAt(adventurer.transform);
+	}
+
+	void CameraIsMoved () {
+		// Moving the camera with iTween interferes with camera adjustments in Update().
+		transition = false;
 	}
 
 	void FindCamDeltas() {
-		deltaY = (altY - defaultY) / 25f;
-		deltaZ = (altZ - defaultZ) / 25f;
+		deltaY = (safeY - heroY) / 30f;
+		deltaZ = (safeZ - heroZ) / 30f;
+	}
+
+	public void CamTestScript (string msg) {
+		Debug.Log("Message from Adventurer.cs: " + msg);
 	}
 
 	bool ObstructedSensor() {
@@ -108,28 +155,3 @@ public class Cam : MonoBehaviour {
 		return obstruction;
 	}
 }
-
-
-
-
-		// Use an OnTriggerEnter event to set local camera positions.
-
-
-
-
-
-//		// Keep the camera from moving into objects.
-//		Vector3 direction = sensor.transform.TransformDirection(Vector3.back);
-//
-//		if (!Adventurer.barbican) {
-//			// iTween movement interferes with barbican movement.
-//			if (Physics.Raycast(adventurer.transform.position, direction, distance)) {
-//				cam.localPosition = new Vector3(0f, 6f, -.75f);
-//				//iTween.MoveTo(gameObject, iTween.Hash("position", new Vector3(0f, 6f, -.75f), "time", 0.5f, "islocal", true));
-//			} else {
-//				cam.localPosition = new Vector3(0f, positionY, positionZ);
-//				//iTween.MoveTo(gameObject, iTween.Hash("position", new Vector3(0f, positionY, positionZ), "time", 0.5f, "islocal", true));
-//			}
-//
-//			cam.LookAt(target);
-//		}

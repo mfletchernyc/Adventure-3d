@@ -841,7 +841,7 @@ GameObject:
   - 23: {fileID: 27499662}
   m_Layer: 0
   m_Name: tower_2
-  m_TagString: Untagged
+  m_TagString: Castle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1673,7 +1673,7 @@ GameObject:
   - 54: {fileID: 77838932}
   m_Layer: 0
   m_Name: camera trigger
-  m_TagString: Untagged
+  m_TagString: CamArea
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2137,7 +2137,7 @@ GameObject:
   - 54: {fileID: 107331267}
   m_Layer: 0
   m_Name: camera trigger
-  m_TagString: Untagged
+  m_TagString: CamArea
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2967,7 +2967,7 @@ GameObject:
   - 23: {fileID: 154294898}
   m_Layer: 0
   m_Name: tower_2
-  m_TagString: Untagged
+  m_TagString: Castle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3518,7 +3518,7 @@ GameObject:
   - 64: {fileID: 179646242}
   m_Layer: 0
   m_Name: castle
-  m_TagString: Untagged
+  m_TagString: Castle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4197,6 +4197,22 @@ Prefab:
     - target: {fileID: 400000, guid: 9008ce67863b14f73888d6780b1806bc, type: 3}
       propertyPath: m_LocalScale.y
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 100020, guid: 9008ce67863b14f73888d6780b1806bc, type: 3}
+      propertyPath: m_TagString
+      value: Castle
+      objectReference: {fileID: 0}
+    - target: {fileID: 100016, guid: 9008ce67863b14f73888d6780b1806bc, type: 3}
+      propertyPath: m_TagString
+      value: Castle
+      objectReference: {fileID: 0}
+    - target: {fileID: 100018, guid: 9008ce67863b14f73888d6780b1806bc, type: 3}
+      propertyPath: m_TagString
+      value: Castle
+      objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: 9008ce67863b14f73888d6780b1806bc, type: 3}
+      propertyPath: m_TagString
+      value: Castle
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 9500000, guid: 9008ce67863b14f73888d6780b1806bc, type: 3}
@@ -5279,7 +5295,7 @@ GameObject:
   - 64: {fileID: 284043490}
   m_Layer: 0
   m_Name: castle
-  m_TagString: Untagged
+  m_TagString: Castle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -9955,7 +9971,7 @@ GameObject:
   - 54: {fileID: 615392697}
   m_Layer: 0
   m_Name: camera trigger
-  m_TagString: Untagged
+  m_TagString: CamArea
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -12250,7 +12266,7 @@ GameObject:
   - 54: {fileID: 790335411}
   m_Layer: 0
   m_Name: camera trigger
-  m_TagString: Untagged
+  m_TagString: CamArea
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -19220,6 +19236,22 @@ Prefab:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 08d2406706cf34768b4091b82f3b583c, type: 2}
+    - target: {fileID: 100020, guid: 9008ce67863b14f73888d6780b1806bc, type: 3}
+      propertyPath: m_TagString
+      value: Castle
+      objectReference: {fileID: 0}
+    - target: {fileID: 100016, guid: 9008ce67863b14f73888d6780b1806bc, type: 3}
+      propertyPath: m_TagString
+      value: Castle
+      objectReference: {fileID: 0}
+    - target: {fileID: 100018, guid: 9008ce67863b14f73888d6780b1806bc, type: 3}
+      propertyPath: m_TagString
+      value: Castle
+      objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: 9008ce67863b14f73888d6780b1806bc, type: 3}
+      propertyPath: m_TagString
+      value: Castle
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 9500000, guid: 9008ce67863b14f73888d6780b1806bc, type: 3}
   m_ParentPrefab: {fileID: 100100000, guid: 9008ce67863b14f73888d6780b1806bc, type: 3}
@@ -20854,7 +20886,9 @@ GameObject:
   - 92: {fileID: 1456968033}
   - 124: {fileID: 1456968032}
   - 114: {fileID: 1456968031}
-  m_Layer: 0
+  - 135: {fileID: 1456968036}
+  - 54: {fileID: 1456968037}
+  m_Layer: 2
   m_Name: camera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
@@ -20872,10 +20906,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ae700abfc316476da72e3a269634e19, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  defaultY: 4
-  defaultZ: -5
-  altY: 6
-  altZ: -.75
+  defaultHeroY: 4
+  defaultHeroZ: -5
+  defaultSafeY: 6
+  defaultSafeZ: -.75
 --- !u!124 &1456968032
 Behaviour:
   m_ObjectHideFlags: 0
@@ -20930,6 +20964,33 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1437350599}
+--- !u!135 &1456968036
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1456968030}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: .5
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!54 &1456968037
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1456968030}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: .0500000007
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &1466677393
 GameObject:
   m_ObjectHideFlags: 0
@@ -21357,7 +21418,7 @@ GameObject:
   - 23: {fileID: 1500205668}
   m_Layer: 0
   m_Name: tower_1
-  m_TagString: Untagged
+  m_TagString: Castle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -22498,7 +22559,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 1557911371}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: sensor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -22833,7 +22894,7 @@ GameObject:
   - 23: {fileID: 1586041426}
   m_Layer: 0
   m_Name: tower_1
-  m_TagString: Untagged
+  m_TagString: Castle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -27117,7 +27178,7 @@ GameObject:
   - 4: {fileID: 1833940183}
   m_Layer: 0
   m_Name: castle
-  m_TagString: Untagged
+  m_TagString: Castle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -27148,8 +27209,8 @@ GameObject:
   - 65: {fileID: 1835138418}
   - 23: {fileID: 1835138417}
   m_Layer: 2
-  m_Name: barbican
-  m_TagString: Barbican
+  m_Name: cam 1.75x-4x1.25x-.75
+  m_TagString: Cam
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -27455,7 +27516,7 @@ GameObject:
   - 64: {fileID: 1848051763}
   m_Layer: 0
   m_Name: camera triggers
-  m_TagString: Untagged
+  m_TagString: Cam
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -29459,7 +29520,7 @@ GameObject:
   - 4: {fileID: 2006327575}
   m_Layer: 0
   m_Name: castle
-  m_TagString: Untagged
+  m_TagString: Castle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -29631,7 +29692,7 @@ GameObject:
   - 54: {fileID: 2023429848}
   m_Layer: 0
   m_Name: camera trigger
-  m_TagString: Untagged
+  m_TagString: CamArea
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

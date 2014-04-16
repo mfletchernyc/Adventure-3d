@@ -8,8 +8,10 @@ using System.Collections;
 public class Portcullis : MonoBehaviour {
 
 	void OnTriggerEnter (Collider other) {
-		if (this.name.Replace("portcullis", "") == other.renderer.material.name.Replace("(Instance)", "")) {
-			iTween.MoveBy(gameObject, iTween.Hash("y", 12f, "time", 3f));
+		if (other.tag == "Item") { // Camera doesn't have a renderer.
+			if (this.name.Replace("portcullis", "") == other.renderer.material.name.Replace("(Instance)", "")) {
+				iTween.MoveBy(gameObject, iTween.Hash("y", 12f, "time", 3f));
+			}
 		}
 	}
 }
