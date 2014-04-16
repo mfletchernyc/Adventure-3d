@@ -73,7 +73,8 @@ public class Adventurer : MonoBehaviour {
 				
 			// Tell camera script to move the camera. Player is a more stable place to test for this.
 			case "Cam":
-			Cam.MoveCamera(other.name);
+			Debug.Log("adv OnTriggerEnter 'Cam'");
+				Cam.MoveCamera(other.name);
 				break;
 
 			// Maze teleporters.
@@ -107,6 +108,7 @@ public class Adventurer : MonoBehaviour {
 
 	void OnTriggerExit (Collider other) {
 		if (other.gameObject.tag == "Cam") {
+			Debug.Log("adv OnTriggerExit 'Cam'");
 			Cam.MoveCamera("exit");
 		}
 	}
