@@ -73,7 +73,6 @@ public class Adventurer : MonoBehaviour {
 				
 			// Tell camera script to move the camera. Player is a more stable place to test for this.
 			case "Cam":
-			Debug.Log("adv OnTriggerEnter 'Cam'");
 				Cam.MoveCamera(other.name);
 				break;
 
@@ -83,8 +82,8 @@ public class Adventurer : MonoBehaviour {
 				float advX = adventurer.position.x;
 				float advZ = adventurer.position.z;
 				
-				// Teleporter name is "jump " + deltaX + "x" + deltaZ.
-				string[] jumpDeltas = other.name.Replace("jump ", "").Split('x');
+				// Teleporter name is "jump " + deltaX + "," + deltaZ.
+				string[] jumpDeltas = other.name.Replace("jump ", "").Split(',');
 				float deltaX, deltaZ;
 				if (float.TryParse(jumpDeltas[0], out deltaX)) { advX += deltaX; }
 				if (float.TryParse(jumpDeltas[1], out deltaZ)) { advZ += deltaZ; }
@@ -108,7 +107,6 @@ public class Adventurer : MonoBehaviour {
 
 	void OnTriggerExit (Collider other) {
 		if (other.gameObject.tag == "Cam") {
-			Debug.Log("adv OnTriggerExit 'Cam'");
 			Cam.MoveCamera("exit");
 		}
 	}
