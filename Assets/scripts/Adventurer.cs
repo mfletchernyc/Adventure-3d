@@ -21,8 +21,6 @@ public class Adventurer : MonoBehaviour {
 	private int defaultInventory;	// Children of the player object. Default is the camera.
 	
 	private Cam Cam;				// Cam script ref for telling cam about entering a new area.
-
-	private GameObject dragon;		// Dragon ref for getting Dragon script on the next line...
 	private Dragon Dragon;			// Dragon script ref for checking dragon position during teleportation.
 	
 	void Awake () {
@@ -31,10 +29,8 @@ public class Adventurer : MonoBehaviour {
 	}
 
 	void Start () {
-		dragon = GameObject.Find("Yorgle"); // All dragons use the same script.
-		Dragon = dragon.GetComponent<Dragon>();
-
 		Cam = GameObject.Find("camera").GetComponent<Cam>();
+		Dragon = GameObject.Find("Yorgle").GetComponent<Dragon>();
 	}
 
 	void FixedUpdate () {	
