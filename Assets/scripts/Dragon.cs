@@ -79,7 +79,7 @@ public class Dragon : MonoBehaviour {
 			if (Time.time > chompTimer + chompDuration) {
 				Pose(true, false, false);	// Can't kill, so resume normal behavior.
 
-				if (Vector3.Distance(adventurer.transform.position, dragon.position) < biteRange) {
+				if (Vector3.Distance(adventurer.transform.position, dragon.position) < biteRange && !Adventurer.gameOver) {
 					Kill();
 				}
 			}

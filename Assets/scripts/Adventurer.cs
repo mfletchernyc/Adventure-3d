@@ -44,7 +44,7 @@ public class Adventurer : MonoBehaviour {
 	
 	void Update () {
 		// Drop an object if possible.
-		if (Input.GetButton("Jump")) { DropObject(); }
+		if (Input.GetButton("Jump") && !gameOver) { DropObject(); }
 	}
 
 	void OnTriggerEnter (Collider other) {
