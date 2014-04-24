@@ -7,11 +7,11 @@ using System.Collections;
 
 public class Dragon : MonoBehaviour {
 	
-	public float interestRange;		// Distance at which dragon notices items or the adventurer.
-	public float biteRange;			// Distance at which dragon can eat the adventurer.
-	public float deathRange;		// Distance from the sword at which the dragon dies.
-	public float speed;				// How fast is dragon?
-	public float chompDuration;		// How long between chomping and eating?
+	public float interestRange;			// Distance at which dragon notices items or the adventurer.
+	public float biteRange;				// Distance at which dragon can eat the adventurer.
+	public float deathRange;			// Distance from the sword at which the dragon dies.
+	public float speed;					// How fast is dragon?
+	public float chompDuration;			// How long between chomping and eating?
 
 	public AudioClip slay, chomp, death;
 
@@ -23,9 +23,7 @@ public class Dragon : MonoBehaviour {
 	private Transform dead;				// Dead dragon appearance.
 	private Transform chomping;			// Attacking dragon appearance.
 	private float chompTimer;			// How soon is now?
-	
 	private GameObject target;			// Object for chasing, attacking and guarding.
-	private Vector3 targetPosition;		// Direction to look chasing and attacking.
 
 	// Need items that frighten each dragon.
 	// Need items that each dragon guards.
@@ -44,11 +42,11 @@ public class Dragon : MonoBehaviour {
 		Adventurer = adventurer.GetComponent<Adventurer>();
 	}
 
-	void Update () {
+	void FixedUpdate () {
 		// Let the dragon do his thing (if he's alive).
 		if (alive.gameObject.activeSelf) {
-			// Detect anything interesting in interest range.
-			Collider[] entities = Physics.OverlapSphere(dragon.position, interestRange);
+			// Detect anything interesting. Adventurer and tems all live in the 'Ignore Raycast' layer.
+			Collider[] entities = Physics.OverlapSphere(dragon.position, interestRange, 1 << 2);
 
 			// RULES:
 			// - Always run from the scary object.
@@ -95,7 +93,7 @@ public class Dragon : MonoBehaviour {
 	
 	void Chase (GameObject target) {
 		// Face the player, then move in that direction.
-		targetPosition = new Vector3(target.transform.position.x, dragon.position.y, target.transform.position.z);
+		Vector3 targetPosition = new Vector3(target.transform.position.x, dragon.position.y, target.transform.position.z);
 		dragon.LookAt(targetPosition);
 		dragon.position = Vector3.MoveTowards(dragon.position, targetPosition, speed * Time.deltaTime);
 	}
@@ -130,7 +128,7 @@ public class Dragon : MonoBehaviour {
 
 	void Die () {
 		// Death greets me warm...
-		if (!dead.gameObject.activeSelf) {
+		if (alive.gameObject.activeSelf) { 
 			audio.PlayOneShot(slay);
 			Pose(false, true, false);
 		}

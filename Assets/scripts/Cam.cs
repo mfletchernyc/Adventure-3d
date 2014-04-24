@@ -24,8 +24,6 @@ public class Cam : MonoBehaviour {
 	
 	private Transform target;			// The camera doesn't actually look at the player, but at a point that makes nice cinematics.
 	private GameObject sensor;			// The origin of cast rays that check camera position for obstruction.
-	private float distance;				// Distance from adventurer to sensor for raycasting.
-	private Vector3 direction;			// Direction from adventurer to sensor for raycasting.
 	private bool transition;			// Prevents usual cam placement routine from fighting with iTween animations.
 	
 	private float heroY, heroZ;			// Cam position for best cinematics.
@@ -155,8 +153,8 @@ public class Cam : MonoBehaviour {
 	}
 
 	bool ObstructedSensor() {
-		distance = Vector3.Distance(sensor.transform.position, adventurer.transform.position);
-		direction = sensor.transform.TransformDirection(Vector3.back) * distance;
+		float distance = Vector3.Distance(sensor.transform.position, adventurer.transform.position);
+		Vector3 direction = sensor.transform.TransformDirection(Vector3.back) * distance;
 
 		return Physics.Raycast(adventurer.transform.position, direction, distance);
 	}

@@ -6,11 +6,10 @@ using System.Collections;
 // http://en.wikipedia.org/wiki/Adventure_(1979_video_game)
 
 public class Adventurer : MonoBehaviour {
-
-	// Player control.
-	public float spin;		// Speed pref for rotation.
-	public float speed;		// Speed pref for forward/backward movement.
-	public bool gameOver;	// Prevents player from moving if game over.
+	
+	public float spin;				// Speed pref for rotation.
+	public float speed;				// Speed pref for forward/backward movement.
+	public bool gameOver;			// Prevents player from moving if game over.
 	
 	public AudioClip pickup, drop;
 	public Material black, blue, green, lime, olive, purple, red, yellow;
@@ -18,8 +17,8 @@ public class Adventurer : MonoBehaviour {
 	private Transform adventurer;
 	private CharacterController controller;
 	
-	private int defaultInventory;	// Children of the player object. Default is the camera.
-	
+	private int defaultInventory;	// Children of the player object; used to determine if an item is held.
+
 	private Cam Cam;				// Cam script ref for telling cam about entering a new area.
 	private Dragon Dragon;			// Dragon script ref for checking dragon position during teleportation.
 	

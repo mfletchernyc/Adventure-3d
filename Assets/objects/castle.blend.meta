@@ -41,6 +41,7 @@ ModelImporter:
     2300018: tower_2
     2300020: tower_3
     2300022: tower_4
+    2300024: //RootNode
     3300000: Cube
     3300002: Cube_001
     3300004: Cube_002
@@ -53,6 +54,7 @@ ModelImporter:
     3300018: tower_2
     3300020: tower_3
     3300022: tower_4
+    3300024: //RootNode
     4300000: Cube_005
     4300002: Cube_004
     4300004: Curve
