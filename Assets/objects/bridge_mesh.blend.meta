@@ -1,72 +1,13 @@
 fileFormatVersion: 2
-guid: 9008ce67863b14f73888d6780b1806bc
+guid: 75a815c93e46843249daab98fdeb0d3f
 ModelImporter:
   serializedVersion: 15
   fileIDToRecycleName:
     100000: //RootNode
-    100002: Cube
-    100004: Cube_001
-    100006: Cube_002
-    100008: Cube_003
-    100010: Cube_004
-    100012: Cube_005
-    100014: Curve
-    100016: castle
-    100018: tower_1
-    100020: tower_2
-    100022: tower_3
-    100024: tower_4
     400000: //RootNode
-    400002: Cube
-    400004: Cube_001
-    400006: Cube_002
-    400008: Cube_003
-    400010: Cube_004
-    400012: Cube_005
-    400014: Curve
-    400016: castle
-    400018: tower_1
-    400020: tower_2
-    400022: tower_3
-    400024: tower_4
-    2300000: Cube
-    2300002: Cube_001
-    2300004: Cube_002
-    2300006: Cube_003
-    2300008: Cube_004
-    2300010: Cube_005
-    2300012: Curve
-    2300014: castle
-    2300016: tower_1
-    2300018: tower_2
-    2300020: tower_3
-    2300022: tower_4
-    2300024: //RootNode
-    3300000: Cube
-    3300002: Cube_001
-    3300004: Cube_002
-    3300006: Cube_003
-    3300008: Cube_004
-    3300010: Cube_005
-    3300012: Curve
-    3300014: castle
-    3300016: tower_1
-    3300018: tower_2
-    3300020: tower_3
-    3300022: tower_4
-    3300024: //RootNode
-    4300000: Cube_005
-    4300002: Cube_004
-    4300004: Curve
-    4300006: Cube_003
-    4300008: Cube
-    4300010: Cube_001
-    4300012: Cube_002
-    4300014: castle
-    4300016: tower_1
-    4300018: tower_2
-    4300020: tower_4
-    4300022: tower_3
+    2300000: //RootNode
+    3300000: //RootNode
+    4300000: Curve
     7400000: Default Take
     9500000: //RootNode
   materials:

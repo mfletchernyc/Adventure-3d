@@ -11,15 +11,17 @@ public class Magnet : MonoBehaviour {
 	public float power;
 
 	private Transform magnet;
+	private Transform focus;
 	private ArrayList items;
-	private Transform itemsContainer;
+	private Transform adventurer;
 
 	void Awake () {
 		magnet = gameObject.transform;
 	}
 
 	void Start () {
-		itemsContainer = GameObject.Find("items").transform;
+		adventurer = GameObject.Find("adventurer").transform;
+		focus = GameObject.Find("focus").transform;
 
 		// Items in order of attraction.
 		items = new ArrayList();
@@ -48,12 +50,10 @@ public class Magnet : MonoBehaviour {
 		if (itemIndex < items.Count) {
 			GameObject item = GameObject.Find(items[itemIndex].ToString());
 
-			if (item.transform.parent == itemsContainer) {
-				Debug.Log("Magnet would like to attract " + item.name);
-
-				// If the highest-ranked object is held by the player, magnet attracts nothing.
+			if (item.transform.parent != adventurer) { // Can't attract an item being held.
 				item.transform.LookAt(new Vector3(magnet.position.x, item.transform.position.y, magnet.position.z));
-				//item.transform.position = Vector3.MoveTowards(item.transform.position, magnet.position, power * Time.deltaTime);
+				Vector3 target = new Vector3(focus.position.x, item.transform.position.y, focus.position.z);
+				item.transform.position = Vector3.MoveTowards(item.transform.position, target, power * Time.deltaTime);
 
 				// If the highest-ranked object is already captured, magnet attracts nothing.
 			}

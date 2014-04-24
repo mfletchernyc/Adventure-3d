@@ -49,6 +49,11 @@ public class Adventurer : MonoBehaviour {
 
 	void OnTriggerEnter (Collider other) {
 		switch (other.gameObject.tag) {
+			// Magic bridge.
+			case "Bridge":
+				Debug.Log("Entering the magic bridge...");
+				break;
+
 			// Pick up items when running into them.
 			case "Item":
 				audio.PlayOneShot(pickup);
@@ -101,8 +106,14 @@ public class Adventurer : MonoBehaviour {
 	}
 
 	void OnTriggerExit (Collider other) {
-		if (other.gameObject.tag == "Cam") {
-			Cam.MoveCamera("exit");
+		switch (other.gameObject.tag) {
+			case "Cam":
+				Cam.MoveCamera("exit");
+				break;
+
+			case "Bridge":
+				Debug.Log("Exiting the magic bridge...");
+				break;
 		}
 	}
 
