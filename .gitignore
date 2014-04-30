@@ -1,5 +1,7 @@
 ﻿Library
+Library/*
 Temp
+Temp/*
 *.sln
 *.csproj
 *.unityproj
