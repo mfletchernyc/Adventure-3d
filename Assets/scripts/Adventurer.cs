@@ -16,7 +16,9 @@ public class Adventurer : MonoBehaviour {
 
 	private Transform adventurer;
 	private CharacterController controller;
-	
+
+	private bool bridge;			// Moving through the bridge changes some rules.
+	private bool stuck;				// For example, you can get stuck in a wall...
 	private int defaultInventory;	// Children of the player object; used to determine if an item is held.
 	private Vector3 direction;		// Direction of travel; also used in picking up objects.
 
@@ -38,7 +40,7 @@ public class Adventurer : MonoBehaviour {
 		adventurer.Rotate(0f, Input.GetAxis("Horizontal") * spin * Time.deltaTime, 0f);
 
 		controller = GetComponent<CharacterController>();
-		if (!gameOver) {
+		if (!gameOver && !stuck) {
 			direction = new Vector3(0f, 0f, Input.GetAxis("Vertical"));
 			controller.Move(adventurer.TransformDirection(direction * speed) * Time.deltaTime);
 		}
@@ -46,18 +48,40 @@ public class Adventurer : MonoBehaviour {
 	
 	void Update () {
 		// Drop an object if possible.
-		if (Input.GetButton("Jump") && !gameOver) { DropObject(); }
+		if (Input.GetButton("Jump") && !gameOver) { 
+			DropObject();
+
+			// The only way to get stuck is to pick up the bridge in a wall.
+			if (stuck) { stuck = false; }
+		}
 	}
 
 	void OnTriggerEnter (Collider other) {
 		switch (other.gameObject.tag) {
 			// Magic bridge.
 			case "Bridge":
-				Debug.Log("Entering the magic bridge...");
+				EnterBridge();
 				break;
 
 			// Pick up items when running into them.
 			case "Item":
+				if (other.gameObject.name == "beam") {
+					// Bridge is composed of multiple colliders.
+					other = GameObject.Find("bridge").collider;
+
+					// Picking up the bridge while inside it ends the magic.
+					if (bridge) { 
+						ExitBridge();
+
+						// Picking up the bridge while using it to move through a wall is sticky.
+						Collider[] entities = Physics.OverlapSphere(adventurer.position, 1f);
+						
+						for (int count = 0; count < entities.Length; count++) {
+							if (entities[count].tag == "Wall") { stuck = true; }
+						}
+					}
+				}
+
 				audio.PlayOneShot(pickup);
 				
 				// If player is already holding something, drop it.
@@ -69,8 +93,9 @@ public class Adventurer : MonoBehaviour {
 				float distance = direction.z > 0 ? 2f : -1.5f;
 				Vector3 itemPosition = other.transform.localPosition; 
 				other.transform.localPosition = new Vector3(itemPosition.x, itemPosition.y, itemPosition.z + distance);
+				
 				break;
-			
+
 			// Set player color to match dominant local color.
 			case "Threshold":
 				adventurer.renderer.material = (Material)this.GetType().GetField(other.renderer.name.ToString()).GetValue(this);
@@ -117,7 +142,7 @@ public class Adventurer : MonoBehaviour {
 				break;
 
 			case "Bridge":
-				Debug.Log("Exiting the magic bridge...");
+				ExitBridge();
 				break;
 		}
 	}
@@ -127,7 +152,26 @@ public class Adventurer : MonoBehaviour {
 			if (child.CompareTag("Item")) {
 				audio.PlayOneShot(drop);
 				child.transform.parent = GameObject.Find("items").transform;
+
+				if (child.name == "bridge") {
+					// If within the dropped bridge, reactivate the magic.
+					Collider[] entities = Physics.OverlapSphere(adventurer.position, 1f);
+
+					for (int count = 0; count < entities.Length; count++) {
+						if (entities[count].tag == "Bridge") { EnterBridge(); }
+					}
+				}
 			}
 		}
+	}
+
+	void EnterBridge () {
+		bridge = true;
+		Physics.IgnoreLayerCollision(0, 2, true);
+	}
+
+	void ExitBridge () {
+		bridge = false;
+		Physics.IgnoreLayerCollision(0, 2, false);
 	}
 }
