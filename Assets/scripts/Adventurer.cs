@@ -18,6 +18,7 @@ public class Adventurer : MonoBehaviour {
 	private CharacterController controller;
 	
 	private int defaultInventory;	// Children of the player object; used to determine if an item is held.
+	private Vector3 direction;		// Direction of travel; also used in picking up objects.
 
 	private Cam Cam;				// Cam script ref for telling cam about entering a new area.
 	private Dragon Dragon;			// Dragon script ref for checking dragon position during teleportation.
@@ -38,7 +39,8 @@ public class Adventurer : MonoBehaviour {
 
 		controller = GetComponent<CharacterController>();
 		if (!gameOver) {
-			controller.Move(adventurer.TransformDirection(new Vector3(0f, 0f, Input.GetAxis("Vertical") * speed)) * Time.deltaTime);
+			direction = new Vector3(0f, 0f, Input.GetAxis("Vertical"));
+			controller.Move(adventurer.TransformDirection(direction * speed) * Time.deltaTime);
 		}
 	}
 	
@@ -61,9 +63,12 @@ public class Adventurer : MonoBehaviour {
 				// If player is already holding something, drop it.
 				if (adventurer.childCount > defaultInventory) { DropObject(); }
 				
-				// Pick up and position object.
+				// Pick up item and position according to direction of travel.
 				other.transform.parent = adventurer;
-				other.transform.localPosition = new Vector3(0f, 0f, 2.5f);
+
+				float distance = direction.z > 0 ? 2f : -1.5f;
+				Vector3 itemPosition = other.transform.localPosition; 
+				other.transform.localPosition = new Vector3(itemPosition.x, itemPosition.y, itemPosition.z + distance);
 				break;
 			
 			// Set player color to match dominant local color.
