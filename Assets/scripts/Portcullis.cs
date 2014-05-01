@@ -8,9 +8,8 @@ using System.Collections;
 public class Portcullis : MonoBehaviour {
 
 	void OnTriggerEnter (Collider other) {
-		if (other.tag == "Item") { // Camera doesn't have a renderer.
-			// Find a better way to do this. Looking at material means all items need a renderer.
-			if (this.name.Replace("portcullis", "") == other.renderer.material.name.Replace("(Instance)", "")) {
+		if (other.name.Split(' ').Length > 1) { // Only applies to the keys.
+			if (this.name.Replace(" portcullis", "") == other.name.Split(' ')[0]) {
 				iTween.MoveBy(gameObject, iTween.Hash("y", 12f, "time", 3f));
 			}
 		}
