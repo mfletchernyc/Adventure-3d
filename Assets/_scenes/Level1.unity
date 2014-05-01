@@ -7943,7 +7943,7 @@ GameObject:
   - 114: {fileID: 476558582}
   m_Layer: 0
   m_Name: black portcullis
-  m_TagString: Untagged
+  m_TagString: Portcullis
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -11488,7 +11488,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 100000, guid: 6119ee50795c44347a050c4be12e3ffa, type: 3}
       propertyPath: m_TagString
-      value: Untagged
+      value: Portcullis
       objectReference: {fileID: 0}
     - target: {fileID: 100000, guid: 6119ee50795c44347a050c4be12e3ffa, type: 3}
       propertyPath: m_Name
@@ -16778,7 +16778,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 100000, guid: 6119ee50795c44347a050c4be12e3ffa, type: 3}
       propertyPath: m_TagString
-      value: Untagged
+      value: Portcullis
       objectReference: {fileID: 0}
     - target: {fileID: 100000, guid: 6119ee50795c44347a050c4be12e3ffa, type: 3}
       propertyPath: m_Name
@@ -26554,7 +26554,7 @@ GameObject:
   - 114: {fileID: 1691206943}
   m_Layer: 0
   m_Name: yellow portcullis
-  m_TagString: Untagged
+  m_TagString: Portcullis
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

@@ -57,13 +57,7 @@ public class Adventurer : MonoBehaviour {
 	}
 
 	void OnTriggerEnter (Collider other) {
-		switch (other.gameObject.tag) {
-			// Magic bridge.
-			case "Bridge":
-				EnterBridge();
-				break;
-
-			// Pick up items when running into them.
+		switch (other.gameObject.tag) {// Pick up items when running into them.
 			case "Item":
 				if (other.gameObject.name == "beam") {
 					// Bridge is composed of multiple colliders.
@@ -105,6 +99,11 @@ public class Adventurer : MonoBehaviour {
 			case "Cam":
 				Cam.MoveCamera(other.name);
 				break;
+
+			// Magic bridge.
+			case "Bridge":
+				EnterBridge();
+				break;				
 
 			// Maze teleporters.
 			case "Jump":
