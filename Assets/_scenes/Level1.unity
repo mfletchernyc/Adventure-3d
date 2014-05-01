@@ -4429,6 +4429,10 @@ Prefab:
       propertyPath: m_LocalScale.z
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 100068, guid: 353636c2991674e5484e2a45b631a50b, type: 3}
+      propertyPath: m_Name
+      value: easter egg
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 9500000, guid: 353636c2991674e5484e2a45b631a50b, type: 3}
   m_ParentPrefab: {fileID: 100100000, guid: 353636c2991674e5484e2a45b631a50b, type: 3}
@@ -28756,7 +28760,7 @@ GameObject:
   - 114: {fileID: 1820874218}
   - 65: {fileID: 1820874221}
   m_Layer: 0
-  m_Name: easter_egg
+  m_Name: easter egg
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -29134,7 +29138,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1835138415}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 8, z: -34}
+  m_LocalPosition: {x: 0, y: 8, z: -32}
   m_LocalScale: {x: 16, y: 8, z: 4}
   m_Children: []
   m_Father: {fileID: 822829202}
