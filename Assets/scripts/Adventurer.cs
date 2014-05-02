@@ -117,14 +117,16 @@ public class Adventurer : MonoBehaviour {
 				if (float.TryParse(jumpDeltas[0], out deltaX)) { advX += deltaX; }
 				if (float.TryParse(jumpDeltas[1], out deltaZ)) { advZ += deltaZ; }
 				
-				// Find everything in the player's sphere, and teleport any dragons along, too.
+				// Find everything in the player's sphere, and teleport any dragons or items along, too.
 				Collider[] entities = Physics.OverlapSphere(adventurer.position, Dragon.interestRange);
 				
 				for (int count = 0; count < entities.Length; count++) {
-					if (entities[count].tag == "Dragon") {
-						float dragonX = entities[count].transform.position.x + deltaX;
-						float dragonZ = entities[count].transform.position.z + deltaZ;
-						entities[count].transform.position = new Vector3(dragonX, 0f, dragonZ);
+					if (entities[count].tag == "Dragon" || entities[count].tag == "Item") {
+						float entityX = entities[count].transform.position.x + deltaX;
+						float entityY = entities[count].transform.position.y;
+						float entityZ = entities[count].transform.position.z + deltaZ;
+						
+						entities[count].transform.position = new Vector3(entityX, entityY, entityZ);
 					}
 				}
 				
