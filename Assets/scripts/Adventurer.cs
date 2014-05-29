@@ -4,28 +4,35 @@ using System.Collections;
 // Adventure reinterpretation for Unity
 // M. Fletcher 2014
 // http://en.wikipedia.org/wiki/Adventure_(1979_video_game)
+//
+// http://atariage.com/manual_thumbs.html?SoftwareLabelID=964
 
 public class Adventurer : MonoBehaviour {
-	
-	public float spin;				// Speed pref for rotation.
-	public float speed;				// Speed pref for forward/backward movement.
-	public bool gameOver;			// Prevents player from moving if game over.
-	
+
+	public bool gameOver;
 	public AudioClip pickup, drop;
 	public Material black, blue, green, lime, olive, purple, red, yellow;
 
 	private Transform adventurer;
 	private CharacterController controller;
 
+	private float spin;				// Speed multiplier for rotation.
+	private float speed;			// Speed multiplier for forward/backward movement.
+	private float acceleration;		// Player eases in and out of forward/backward movement.
+	private float rebound;			// Testing the bounce when using bridge to leave the map.
+
 	private bool bridge;			// Moving through the bridge changes some rules.
 	private bool stuck;				// For example, you can get stuck in a wall...
 	private int defaultInventory;	// Children of the player object; used to determine if an item is held.
-	private Vector3 direction;		// Direction of travel; also used in picking up objects.
 
 	private Cam Cam;				// Cam script ref for telling cam about entering a new area.
 	private Dragon Dragon;			// Dragon script ref for checking dragon position during teleportation.
 	
 	void Awake () {
+		spin = 222f;
+		speed = 66f;
+		rebound = -20f;
+
 		adventurer = gameObject.transform;
 		defaultInventory = adventurer.childCount;
 	}
@@ -35,14 +42,15 @@ public class Adventurer : MonoBehaviour {
 		Dragon = GameObject.Find("Yorgle").GetComponent<Dragon>();
 	}
 
-	void FixedUpdate () {	
+	void FixedUpdate () {
 		// Player rotation and movement.
 		adventurer.Rotate(0f, Input.GetAxis("Horizontal") * spin * Time.deltaTime, 0f);
 
 		controller = GetComponent<CharacterController>();
+
 		if (!gameOver && !stuck) {
-			direction = new Vector3(0f, 0f, Input.GetAxis("Vertical"));
-			controller.Move(adventurer.TransformDirection(direction * speed) * Time.deltaTime);
+			acceleration = Input.GetAxis("Vertical") * speed * Time.deltaTime;
+			controller.Move(adventurer.TransformDirection(new Vector3(0f, 0f, acceleration)));
 		}
 	}
 	
@@ -67,7 +75,7 @@ public class Adventurer : MonoBehaviour {
 					if (bridge) { 
 						ExitBridge();
 
-						// Picking up the bridge while using it to move through a wall is sticky.
+						// Picking up the bridge while using it to move through a wall stops movement.
 						Collider[] entities = Physics.OverlapSphere(adventurer.position, 1f);
 						
 						for (int count = 0; count < entities.Length; count++) {
@@ -83,8 +91,7 @@ public class Adventurer : MonoBehaviour {
 				
 				// Pick up item and position according to direction of travel.
 				other.transform.parent = adventurer;
-
-				float distance = direction.z > 0 ? 2f : -1.5f;
+				float distance = acceleration > 0 ? 2f : -1.5f;
 				Vector3 itemPosition = other.transform.localPosition; 
 				other.transform.localPosition = new Vector3(itemPosition.x, itemPosition.y, itemPosition.z + distance);
 				
@@ -141,9 +148,18 @@ public class Adventurer : MonoBehaviour {
 			case "Cam":
 				Cam.MoveCamera("exit");
 				break;
-
+				
 			case "Bridge":
 				ExitBridge();
+				break;
+				
+			case "Boundary":
+				// Prevent the player from leaving the map with the bridge.
+				// acceleration = Input.GetAxis("Vertical") * speed * Time.deltaTime;
+				Debug.Log("acceleration * rebound = " + (acceleration * rebound));
+				Debug.Log("rebound * speed * Time.deltaTime = " + (rebound * speed * Time.deltaTime));
+
+				controller.Move(adventurer.TransformDirection(new Vector3(0f, 0f, speed * Time.deltaTime * rebound)));
 				break;
 		}
 	}
