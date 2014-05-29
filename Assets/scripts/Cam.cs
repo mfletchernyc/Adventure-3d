@@ -97,9 +97,9 @@ public class Cam : MonoBehaviour {
 			}
 		}
 
-			// Put the camera in position.
-			cam.localPosition = sensor.transform.localPosition;
-			cam.LookAt(target);
+		// Put the camera in position.
+		cam.localPosition = sensor.transform.localPosition;
+		cam.LookAt(target);
 	}
 
 	public void MoveCamera (string message) {
