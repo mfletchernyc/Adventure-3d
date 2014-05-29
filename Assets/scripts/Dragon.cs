@@ -12,6 +12,7 @@ public class Dragon : MonoBehaviour {
 	public float deathRange;			// Distance from the sword at which the dragon dies.
 	public float speed;					// How fast is dragon?
 	public float chompDuration;			// How long between chomping and eating?
+	public float fleeDuration;			// How long between fleeing and attacking?
 
 	public AudioClip slay, chomp, death;
 
@@ -22,7 +23,9 @@ public class Dragon : MonoBehaviour {
 	private Transform alive;			// Default dragon appearance.
 	private Transform dead;				// Dead dragon appearance.
 	private Transform chomping;			// Attacking dragon appearance.
-	private float chompTimer;			// How soon is now?
+	private float chompTimer;			// Delay between chomp and kill.
+	private float fleeTimer;			// When player holds a scary object, dragon gets conflicted.
+	private bool fleeing;				// Giving the dragon time to flee prevents bouncing.
 	private GameObject target;			// Object for chasing, attacking and guarding.
 
 	// Need items that frighten each dragon.
@@ -31,53 +34,69 @@ public class Dragon : MonoBehaviour {
 	void Awake () {
 		dragon = gameObject.transform;
 
-		// Dragon object contains the three poses.
-		alive = dragon.FindChild("dragon");
-		dead = dragon.FindChild("dragon_dead");
-		chomping = dragon.FindChild("dragon_chomp");
+		// Dragon contains the three poses. Used for getting the current state.
+		alive = dragon.FindChild("alive");
+		dead = dragon.FindChild("dead");
+		chomping = dragon.FindChild("chomping");
 	}
 	
 	void Start () {
 		adventurer = GameObject.Find("adventurer");
 		Adventurer = adventurer.GetComponent<Adventurer>();
+
+		// Create Yorgle's list of objects to guard.
+		// Create Grundle's list of objects to flee.
 	}
 
 	void FixedUpdate () {
 		// Let the dragon do his thing (if he's alive).
+
+		// RULES:
+		// - Always run from the scary object.
+		// - If there is only a preferred object, guard it.
+		// - If the adventurer is in range of a preferred object, attack.
+		// - Go in search of a preferred object...when?
+
 		if (alive.gameObject.activeSelf) {
-			// Detect anything interesting. Adventurer and tems all live in the 'Ignore Raycast' layer.
-			Collider[] entities = Physics.OverlapSphere(dragon.position, interestRange, 1 << 2);
+			if (fleeing) {
+				// Dragon flees for a while to prevent bouncing.
+				dragon.Translate(Vector3.forward * speed * Time.deltaTime);
 
-			// RULES:
-			// - Always run from the scary object.
-			// - If there is only a preferred object, guard it.
-			// - If the adventurer is in range of a preferred object, attack.
-			
-			for (int count = 0; count < entities.Length; count++) {
-				if (entities[count].name == "adventurer" && !Adventurer.gameOver) {
-					if (Vector3.Distance(dragon.position, adventurer.transform.position) < biteRange) {
-						Chomp();
-					} else { 
-						Chase(adventurer);
+				if (Time.time > fleeTimer + fleeDuration) { fleeing = false; }
+			}
+
+			else {
+				// Detect anything interesting. Adventurer and tems all live in the 'Ignore Raycast' layer.
+				Collider[] entities = Physics.OverlapSphere(dragon.position, interestRange, 1 << 2);
+				
+				for (int count = 0; count < entities.Length; count++) {
+					if (dragon.name == "Yorgle" && entities[count].name == "yellow key") {
+						Flee(GameObject.Find("yellow key"));
+						break;
+					}
+
+					else {
+						if (entities[count].name == "adventurer" && !Adventurer.gameOver) {
+							if (Vector3.Distance(dragon.position, adventurer.transform.position) < biteRange) {
+								Chomp();
+							} else { Chase(adventurer); }
+						}
+
+						if (entities[count].name == "sword") { 
+							// Checking trigger collisions is flakey if player isn't holding the sword.
+							if (Vector3.Distance(dragon.position, entities[count].transform.position) < deathRange) {
+								Die();
+							}
+						}
 					}
 				}
-
-				if (entities[count].name == "sword") { 
-					// Checking trigger collisions is flakey if player isn't holding the sword.
-					if (Vector3.Distance(dragon.position, entities[count].transform.position) < deathRange) {
-						Die();
-					}
-				}
-
-				// Check for items that scare the dragon.
-				// Check for items the dragon likes to guard.
 			}
 		}
 
 		// Dragon is mid-attack; either kill or resume normal behavior.
 		if (chomping.gameObject.activeSelf) {
 			if (Time.time > chompTimer + chompDuration) {
-				Pose(true, false, false);	// Can't kill, so resume normal behavior.
+				Pose("alive");	// Can't kill, so resume normal behavior.
 
 				if (Vector3.Distance(adventurer.transform.position, dragon.position) < biteRange && !Adventurer.gameOver) {
 					Kill();
@@ -92,7 +111,6 @@ public class Dragon : MonoBehaviour {
 	}
 	
 	void Chase (GameObject target) {
-		// Face the player, then move in that direction.
 		Vector3 targetPosition = new Vector3(target.transform.position.x, dragon.position.y, target.transform.position.z);
 		dragon.LookAt(targetPosition);
 		dragon.position = Vector3.MoveTowards(dragon.position, targetPosition, speed * Time.deltaTime);
@@ -102,7 +120,7 @@ public class Dragon : MonoBehaviour {
 		// Called from the adventurer script.
 		if (alive.gameObject.activeSelf) { // Don't chomp if already chomping.
 			audio.PlayOneShot(chomp);
-			Pose(false, false, true);
+			Pose("chomping");
 			chompTimer = Time.time;
 		}
 	}
@@ -114,8 +132,13 @@ public class Dragon : MonoBehaviour {
 	}
 	
 	void Flee (GameObject target) {
-		// get scary object position
-		// move away from that position
+		Vector3 targetPosition = new Vector3(target.transform.position.x, dragon.position.y, target.transform.position.z);
+		dragon.LookAt(targetPosition);
+		dragon.Rotate(0, 180, 0);
+		dragon.Translate(Vector3.forward * speed * Time.deltaTime);
+
+		fleeTimer = Time.time;
+		fleeing = true;
 	}
 
 	void Kill () {
@@ -130,14 +153,15 @@ public class Dragon : MonoBehaviour {
 		// Death greets me warm...
 		if (alive.gameObject.activeSelf) { 
 			audio.PlayOneShot(slay);
-			Pose(false, true, false);
+			Pose("dead");
 		}
 	}
 
-	void Pose (bool a, bool s, bool c) {
+	void Pose (string pose) {
 		// Crude animation by showing/hiding child models.
-		alive.gameObject.SetActive(a);
-		dead.gameObject.SetActive(s);
-		chomping.gameObject.SetActive(c);
+		alive.gameObject.SetActive(false);
+		dead.gameObject.SetActive(false);
+		chomping.gameObject.SetActive(false);
+		dragon.FindChild(pose).gameObject.SetActive(true);
 	}
 }
