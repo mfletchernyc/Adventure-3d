@@ -128,7 +128,7 @@ public class Adventurer : MonoBehaviour {
 				Collider[] entities = Physics.OverlapSphere(adventurer.position, Dragon.interestRange);
 				
 				for (int count = 0; count < entities.Length; count++) {
-					if (entities[count].tag == "Dragon" || entities[count].tag == "Item") {
+				if (entities[count].tag == "Dragon" || (entities[count].tag == "Item" && entities[count].transform.parent != adventurer)) {
 						float entityX = entities[count].transform.position.x + deltaX;
 						float entityY = entities[count].transform.position.y;
 						float entityZ = entities[count].transform.position.z + deltaZ;
@@ -154,11 +154,7 @@ public class Adventurer : MonoBehaviour {
 				break;
 				
 			case "Boundary":
-				// Prevent the player from leaving the map with the bridge.
-				// acceleration = Input.GetAxis("Vertical") * speed * Time.deltaTime;
-				Debug.Log("acceleration * rebound = " + (acceleration * rebound));
-				Debug.Log("rebound * speed * Time.deltaTime = " + (rebound * speed * Time.deltaTime));
-
+				// Prevent the player from leaving the map by using the bridge.
 				controller.Move(adventurer.TransformDirection(new Vector3(0f, 0f, speed * Time.deltaTime * rebound)));
 				break;
 		}
