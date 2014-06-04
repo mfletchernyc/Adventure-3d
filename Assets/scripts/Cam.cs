@@ -12,27 +12,33 @@ public class Cam : MonoBehaviour {
 	// The map area has default camera positions. 'Hero' looks best cinematically.
 	// 'Safe' prevents any collisions with area-specific objects. When the camera's
 	// view of the player becomes obstructed, it will move towards the safe position
-	// (and vice versa). The maze and barbicans change these positions. Currently
-	// these special areas use only a single position. If this changes, refactor. 
+	// (and vice versa). The maze and barbicans use the same values for a fixed camera.
 
-	public float defaultHeroY, defaultHeroZ;
-	public float defaultSafeY, defaultSafeZ;
-	public float defaultTargetY, defaultTargetZ;
-	
 	private Transform cam;
 	private GameObject adventurer;
 	
 	private Transform target;			// The camera doesn't actually look at the player, but at a point that makes nice cinematics.
 	private GameObject sensor;			// The origin of cast rays that check camera position for obstruction.
 	private bool transition;			// Prevents usual cam placement routine from fighting with iTween animations.
-	
+
 	private float heroY, heroZ;			// Cam position for best cinematics.
 	private float safeY, safeZ;			// Cam position to avoid any obstructions.
 	private float deltaY, deltaZ;		// Distance moved each update between hero and safe.
 	private float targetY, targetZ;		// Cam target position also changes in special areas.
+
+	private float defaultHeroY, defaultHeroZ;
+	private float defaultSafeY, defaultSafeZ;
+	private float defaultTargetY, defaultTargetZ;
 	
 	void Awake () {
 		cam = gameObject.transform;
+
+		defaultHeroY = 4f;
+		defaultHeroZ = -5f;
+		defaultSafeY = 6f;
+		defaultSafeZ = -0.75f;
+		defaultTargetY = 2.1f;
+		defaultTargetZ = 2f;
 		
 		heroY = defaultHeroY;
 		heroZ = defaultHeroZ;

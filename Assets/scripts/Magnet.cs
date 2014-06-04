@@ -7,8 +7,8 @@ using System.Collections;
 
 public class Magnet : MonoBehaviour {
 
-	public float range;
-	public float power;
+	private float range;
+	private float power;
 
 	private Transform magnet;
 	private Transform focus;
@@ -20,6 +20,9 @@ public class Magnet : MonoBehaviour {
 	}
 
 	void Start () {
+		range = 80f;
+		power = 20f;
+
 		adventurer = GameObject.Find("adventurer").transform;
 		focus = GameObject.Find("focus").transform;
 
