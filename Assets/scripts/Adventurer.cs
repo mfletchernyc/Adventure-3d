@@ -20,18 +20,19 @@ public class Adventurer : MonoBehaviour {
 	private float speed;			// Speed multiplier for forward/backward movement.
 	private float acceleration;		// Player eases in and out of forward/backward movement.
 	private float rebound;			// Testing the bounce when using bridge to leave the map.
+	private float teleportRange;	// Obects in range get transported along with the player.
 
 	private bool bridge;			// Moving through the bridge changes some rules.
 	private bool stuck;				// For example, you can get stuck in a wall...
 	private int defaultInventory;	// Children of the player object; used to determine if an item is held.
 
 	private Cam Cam;				// Cam script ref for telling cam about entering a new area.
-	private Dragon Dragon;			// Dragon script ref for checking dragon position during teleportation.
 	
 	void Awake () {
 		spin = 222f;
 		speed = 66f;
 		rebound = -20f;
+		teleportRange = 80f;
 
 		adventurer = gameObject.transform;
 		defaultInventory = adventurer.childCount;
@@ -39,7 +40,6 @@ public class Adventurer : MonoBehaviour {
 
 	void Start () {
 		Cam = GameObject.Find("camera").GetComponent<Cam>();
-		Dragon = GameObject.Find("Yorgle").GetComponent<Dragon>();
 	}
 
 	void FixedUpdate () {
@@ -125,7 +125,7 @@ public class Adventurer : MonoBehaviour {
 				if (float.TryParse(jumpDeltas[1], out deltaZ)) { advZ += deltaZ; }
 				
 				// Find everything in the player's sphere, and teleport any dragons or items along, too.
-				Collider[] entities = Physics.OverlapSphere(adventurer.position, Dragon.interestRange);
+				Collider[] entities = Physics.OverlapSphere(adventurer.position, teleportRange);
 				
 				for (int count = 0; count < entities.Length; count++) {
 				if (entities[count].tag == "Dragon" || (entities[count].tag == "Item" && entities[count].transform.parent != adventurer)) {

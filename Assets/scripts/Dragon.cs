@@ -7,34 +7,45 @@ using System.Collections;
 
 public class Dragon : MonoBehaviour {
 	
-	public float interestRange;			// Distance at which dragon notices items or the adventurer.
-	public float biteRange;				// Distance at which dragon can eat the adventurer.
-	public float deathRange;			// Distance from the sword at which the dragon dies.
-	public float speed;					// How fast is dragon?
-	public float chompDuration;			// How long between chomping and eating?
-	public float fleeDuration;			// How long between fleeing and attacking?
-
 	public AudioClip slay, chomp, death;
 
 	private Transform dragon;
 	private GameObject adventurer;
 	private Adventurer Adventurer;
+	private GameObject target;
 
 	private Transform alive;			// Default dragon appearance.
 	private Transform dead;				// Dead dragon appearance.
 	private Transform chomping;			// Attacking dragon appearance.
+
+	private float speed;				// How fast is dragon?
+	private float chompDuration;		// How long between chomping and eating?
+	private float interestRange;		// Distance at which dragon notices items or the adventurer.
+	private float biteRange;			// Distance at which dragon can eat the adventurer.
+	public float deathRange;			// Distance from the sword at which the dragon dies.
+
 	private float chompTimer;			// Delay between chomp and kill.
 	private float fleeTimer;			// When player holds a scary object, dragon gets conflicted.
 	private bool fleeing;				// Giving the dragon time to flee prevents bouncing.
-	private GameObject target;			// Object for chasing, attacking and guarding.
-
-	// Need items that frighten each dragon.
-	// Need items that each dragon guards.
+	private float fleeDuration;			// How long between fleeing and attacking again?
 
 	void Awake () {
 		dragon = gameObject.transform;
 
-		// Dragon contains the three poses. Used for getting the current state.
+		interestRange = 80f;
+		biteRange = 15f;
+		deathRange = 10f;
+		fleeDuration = 1.5f;
+
+		if (dragon.name == "Yorgle") {
+			speed = 57f;
+			chompDuration = 1.5f;
+		} else {
+			speed = 53f;
+			chompDuration = 2f;
+		}
+
+		// Dragon contains the three poses. Used for getting the current dragon state.
 		alive = dragon.FindChild("alive");
 		dead = dragon.FindChild("dead");
 		chomping = dragon.FindChild("chomping");
@@ -70,10 +81,13 @@ public class Dragon : MonoBehaviour {
 				Collider[] entities = Physics.OverlapSphere(dragon.position, interestRange, 1 << 2);
 				
 				for (int count = 0; count < entities.Length; count++) {
+					// In level one, difficulty easy, there's only one scary item.
 					if (dragon.name == "Yorgle" && entities[count].name == "yellow key") {
 						Flee(GameObject.Find("yellow key"));
 						break;
 					}
+
+					// Need to add items dragons like to guard.
 
 					else {
 						if (entities[count].name == "adventurer" && !Adventurer.gameOver) {
